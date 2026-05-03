@@ -41,8 +41,8 @@ export default async function handler(req, res) {
           },
 
           customizations: {
-            title: "My Business",
-            description: "Payment",
+            title: "Glm",
+            description: "Subscription",
           },
         }),
       }
