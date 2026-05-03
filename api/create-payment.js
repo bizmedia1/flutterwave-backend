@@ -9,20 +9,37 @@ module.exports = async (req, res) => {
     return res.status(200).end();
   }
 
+  if (req.method !== "POST") {
+    return res.status(405).json({ error: "Method not allowed" });
+  }
+
   try {
-    const { email, amount, name } = req.body;
+    // FIX: Ensure body is parsed
+    let body = req.body;
+
+    if (!body || typeof body === "string") {
+      body = JSON.parse(body || "{}");
+    }
+
+    const { email, amount, name } = body;
+
+    if (!email || !amount || !name) {
+      return res.status(400).json({
+        error: "Missing email, amount or name"
+      });
+    }
 
     const response = await axios.post(
       "https://api.flutterwave.com/v3/payments",
       {
         tx_ref: "tx_" + Date.now(),
-        amount: amount,
+        amount,
         currency: "NGN",
         redirect_url: "https://your-site.com/success",
 
         customer: {
-          email: email,
-          name: name
+          email,
+          name
         },
 
         customizations: {
