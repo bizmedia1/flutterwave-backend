@@ -33,7 +33,7 @@ export default async function handler(req, res) {
           tx_ref: `tx_${Date.now()}`,
           amount,
           currency: "NGN",
-          redirect_url: "https://your-site.com/success", // change later
+          redirect_url: "https://t.me/GlamourAgent01", // change later
 
           customer: {
             email,
