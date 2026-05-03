@@ -1,8 +1,7 @@
-const axios = require("axios");
-
-module.exports = async (req, res) => {
+export default async function handler(req, res) {
+  // CORS
   res.setHeader("Access-Control-Allow-Origin", "*");
-  res.setHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS");
+  res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
 
   if (req.method === "OPTIONS") {
@@ -10,59 +9,55 @@ module.exports = async (req, res) => {
   }
 
   if (req.method !== "POST") {
-    return res.status(405).json({ error: "Method not allowed" });
+    return res.status(405).json({ message: "Method not allowed" });
   }
 
   try {
-    // FIX: Ensure body is parsed
-    let body = req.body;
-
-    if (!body || typeof body === "string") {
-      body = JSON.parse(body || "{}");
-    }
-
-    const { email, amount, name } = body;
+    const { email, amount, name } = req.body;
 
     if (!email || !amount || !name) {
       return res.status(400).json({
-        error: "Missing email, amount or name"
+        message: "Missing fields",
       });
     }
 
-    const response = await axios.post(
+    const response = await fetch(
       "https://api.flutterwave.com/v3/payments",
       {
-        tx_ref: "tx_" + Date.now(),
-        amount,
-        currency: "NGN",
-        redirect_url: "https://your-site.com/success",
-
-        customer: {
-          email,
-          name
-        },
-
-        customizations: {
-          title: "My Business",
-          description: "Payment",
-          logo: "https://via.placeholder.com/150"
-        }
-      },
-      {
+        method: "POST",
         headers: {
           Authorization: `Bearer ${process.env.FLW_SECRET_KEY}`,
-          "Content-Type": "application/json"
-        }
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          tx_ref: `tx_${Date.now()}`,
+          amount,
+          currency: "NGN",
+          redirect_url: "https://tr.ee/kf8yz4NjOi",
+
+          customer: {
+            email,
+            name,
+          },
+
+          customizations: {
+            title: "My Business",
+            description: "Payment",
+          },
+        }),
       }
     );
 
+    const data = await response.json();
+
     return res.status(200).json({
-      link: response.data.data.link
+      link: data.data.link
     });
 
   } catch (error) {
     return res.status(500).json({
-      error: error.response?.data || error.message
+      message: "Something went wrong",
+      error: error.message,
     });
   }
-};
+}
