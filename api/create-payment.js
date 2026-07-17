@@ -13,7 +13,12 @@ export default async function handler(req, res) {
   }
 
   try {
-    const { email, amount, name } = req.body;
+    const {
+      email,
+      amount,
+      name,
+      phone
+    } = req.body;
 
     if (!email || !amount || !name) {
       return res.status(400).json({
@@ -30,19 +35,20 @@ export default async function handler(req, res) {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          tx_ref: `tx_${Date.now()}`,
+          tx_ref: `NEXTEL_${Date.now()}`,
           amount,
           currency: "NGN",
-          redirect_url: "https://t.me/GlamourAgent01", // change later
+          redirect_url: "https://t.me/GlamourAgent01",
 
           customer: {
             email,
+            phone_number: phone,
             name,
           },
 
           customizations: {
-            title: "Glm",
-            description: "Subscription",
+            title: "Nextel",
+            description: "Membership Payment",
           },
         }),
       }
@@ -51,7 +57,7 @@ export default async function handler(req, res) {
     const data = await response.json();
 
     return res.status(200).json({
-      link: data.data.link
+      link: data.data.link,
     });
 
   } catch (error) {
