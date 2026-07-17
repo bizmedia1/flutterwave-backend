@@ -19,12 +19,15 @@ export default async function handler(req, res) {
       name,
       phone
     } = req.body;
-
-    if (!email || !amount || !name) {
-      return res.status(400).json({
-        message: "Missing fields",
-      });
-    }
+if (!email || !amount || !name) {
+  return res.status(400).json({
+    email,
+    amount,
+    name,
+    phone,
+    body: req.body
+  });
+}
 
     const response = await fetch(
       "https://api.flutterwave.com/v3/payments",
