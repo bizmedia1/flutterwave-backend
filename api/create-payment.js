@@ -41,7 +41,8 @@ if (!email || !amount || !name) {
           tx_ref: `NEXTEL_${Date.now()}`,
           amount,
           currency: "NGN",
-          redirect_url: "https://t.me/GlamourAgent01",
+          payment_options: "banktransfer",
+          redirect_url: "https://t.me/Aurionagent?text=Hello%20,%20Admin%20.%20I%20have%20just%20made%20my%20payment%20for%20the%20Aurion%20Activation%20Please%20confirm%20my%20payment",
 
           customer: {
             email,
